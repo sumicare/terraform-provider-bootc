@@ -1,0 +1,134 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  GO_VERSION: "1.26"
+  BOOTC_VERSION: "1.13.0"
+
+jobs:
+  build:
+    name: Build (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: fedora:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            rust_target: x86_64-unknown-linux-gnu
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+            rust_target: aarch64-unknown-linux-gnu
+    steps:
+      - name: Install system dependencies
+        run: |
+          dnf install -y \
+            git \
+            gcc \
+            pkgconf-pkg-config \
+            ostree-devel \
+            glib2-devel \
+            openssl-devel \
+            zlib-ng-compat-devel \
+            libzstd-devel
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Configure git safe directory
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_target }}
+      - name: Set up sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
+      - name: Cache bootc source
+        id: cache-bootc-src
+        uses: actions/cache@v4
+        with:
+          path: bootc-src
+          key: bootc-src-${{ env.BOOTC_VERSION }}
+      - name: Clone bootc source
+        if: steps.cache-bootc-src.outputs.cache-hit != 'true'
+        run: git clone --depth 1 --branch "v${{ env.BOOTC_VERSION }}" https://github.com/bootc-dev/bootc.git bootc-src
+      - name: Build Rust bridge
+        env:
+          RUSTC_WRAPPER: sccache
+          SCCACHE_GHA_ENABLED: "true"
+        run: |
+          rm -f target/.cargo-lock
+          cargo build --release --target ${{ matrix.rust_target }} -p bootc-bridge
+          rm -rf target/release
+          ln -sfn ${{ matrix.rust_target }}/release target/release
+      - run: go mod download
+      - name: Extract version info
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          COMMIT="$(git rev-parse HEAD)"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "commit=${COMMIT}" >> "$GITHUB_OUTPUT"
+      - name: Build provider binary
+        run: |
+          CGO_ENABLED=1 go build -trimpath \
+            -ldflags="-s -w -X main.version=${{ steps.version.outputs.version }}" \
+            -o "sumicare-provider-bootc_v${{ steps.version.outputs.version }}" \
+            .
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-linux-${{ matrix.arch }}
+          path: sumicare-provider-bootc_v${{ steps.version.outputs.version }}
+
+  goreleaser:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Download amd64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-linux-amd64
+          path: prebuilt/linux_amd64
+      - name: Download arm64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-linux-arm64
+          path: prebuilt/linux_arm64
+      - name: Make binaries executable
+        run: chmod +x prebuilt/linux_*/*
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: latest
+          args: release --clean
+        env:
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GITHUB_TOKEN: ${{ secrets.GORELEASER_GITHUB_TOKEN }}

@@ -1,0 +1,30 @@
+[package]
+name = "bootc-bridge"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+description = "Thin C ABI bridge to bootc-lib for Go/CGo consumption"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+bootc-lib = { path = "../bootc-src/crates/lib", features = ["install-to-disk"] }
+anyhow = { workspace = true }
+libc = { workspace = true }
+tokio = { workspace = true, features = ["rt"] }
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "allow"
+missing_debug_implementations = "allow"
+unused_must_use = "forbid"
+dead_code = "deny"
+
+[lints.clippy]
+disallowed_methods = "deny"
+dbg_macro = "deny"
+todo = "deny"
+needless_borrow = "allow"
+needless_borrows_for_generic_args = "allow"
