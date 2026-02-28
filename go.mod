@@ -1,4 +1,4 @@
-module git.sumi.care/sumicare/sumicare-provider-bootc
+module github.com/sumicare/sumicare-provider-bootc
 
 go 1.26.0
 

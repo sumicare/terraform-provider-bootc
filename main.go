@@ -21,8 +21,8 @@ import (
 	"flag"
 	"log"
 
-	provider "git.sumi.care/sumicare/sumicare-provider-bootc/bootc"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	provider "github.com/sumicare/sumicare-provider-bootc/bootc"
 )
 
 // version is set via -ldflags at build time.
