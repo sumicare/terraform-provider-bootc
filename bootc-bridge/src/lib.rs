@@ -22,18 +22,7 @@
 use std::ffi::{CStr, OsString};
 use std::os::unix::ffi::OsStringExt;
 
-/// Run bootc with the given argument vector.
-///
-/// `argc` is the number of arguments, `argv` is a C-style array of
-/// null-terminated UTF-8 strings. The first element should be the
-/// program name (e.g. "bootc").
-///
-/// Returns 0 on success, 1 on error. Errors are printed to stderr.
-/// Panics abort the process (release profile uses `panic = "abort"`).
-///
-/// # Safety
-///
-/// `argv` must point to `argc` valid, non-null, null-terminated C strings.
+/// Run bootc with the given arguments.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn bootc_run(argc: i32, argv: *const *const libc::c_char) -> i32 {
     if argc < 1 || argv.is_null() {

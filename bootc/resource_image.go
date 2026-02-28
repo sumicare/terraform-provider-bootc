@@ -1,25 +1,4 @@
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    Copyright 2026 Sumicare
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,10 +35,9 @@ import (
 
 var _ resource.Resource = &ImageResource{}
 
-// ImageResource builds a qcow2 disk image from a bootc container image.
+// ImageResource implements the bootc_image Terraform resource.
 type ImageResource struct{}
 
-// ImageResourceModel maps the resource schema to Go types.
 type ImageResourceModel struct {
 	Kargs                 types.List   `tfsdk:"kargs"`
 	OutputFilename        types.String `tfsdk:"output_filename"`
@@ -76,7 +54,6 @@ type ImageResourceModel struct {
 	GenericImage          types.Bool   `tfsdk:"generic_image"`
 }
 
-// NewImageResource returns a new ImageResource.
 func NewImageResource() resource.Resource {
 	return &ImageResource{}
 }

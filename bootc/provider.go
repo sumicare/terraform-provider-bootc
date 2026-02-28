@@ -1,25 +1,4 @@
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    Copyright 2026 Sumicare
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,19 +29,18 @@ var _ provider.Provider = &BootcProvider{}
 
 const providerTypeName = "bootc"
 
-// BootcProvider implements the Terraform provider for bootc image builds.
+// BootcProvider is the top-level Terraform provider.
 type BootcProvider struct {
 	version string
 }
 
-// New creates a new BootcProvider instance.
+// New returns a provider factory stamped with the given version.
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
 		return &BootcProvider{version: version}
 	}
 }
 
-// Metadata returns the metadata for the provider.
 func (p *BootcProvider) Metadata(
 	ctx context.Context,
 	req provider.MetadataRequest,
@@ -72,7 +50,6 @@ func (p *BootcProvider) Metadata(
 	resp.Version = p.version
 }
 
-// Schema returns the schema for the provider.
 func (*BootcProvider) Schema(
 	ctx context.Context,
 	req provider.SchemaRequest,
@@ -83,7 +60,6 @@ func (*BootcProvider) Schema(
 	}
 }
 
-// Configure configures the provider.
 func (*BootcProvider) Configure(
 	_ context.Context,
 	_ provider.ConfigureRequest,
@@ -91,14 +67,12 @@ func (*BootcProvider) Configure(
 ) {
 }
 
-// Resources returns the resources supported by the provider.
 func (*BootcProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewImageResource,
 	}
 }
 
-// DataSources returns the data sources supported by the provider.
 func (*BootcProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return nil
 }

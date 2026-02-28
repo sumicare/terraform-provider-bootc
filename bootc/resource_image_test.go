@@ -1,25 +1,4 @@
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    Copyright 2026 Sumicare
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,7 +42,6 @@ const (
 	testQemuImgCmd      = "qemu-img"
 )
 
-// TestImageResource_New tests the NewImageResource function.
 func TestImageResource_New(t *testing.T) {
 	r := NewImageResource()
 	if r == nil {
@@ -75,7 +53,6 @@ func TestImageResource_New(t *testing.T) {
 	}
 }
 
-// TestImageResource_Metadata tests the Metadata method.
 func TestImageResource_Metadata(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -260,7 +237,6 @@ func TestImageResource_Schema(t *testing.T) {
 	})
 }
 
-// TestImageResource_Update tests the Update method.
 func TestImageResource_Update(t *testing.T) {
 	ir := &ImageResource{}
 	resp := &resource.UpdateResponse{}
@@ -283,7 +259,6 @@ func TestImageResource_Update(t *testing.T) {
 	}
 }
 
-// TestImageResource_DiskSizeDefault tests the disk size default value.
 func TestImageResource_DiskSizeDefault(t *testing.T) {
 	// With the schema default, disk_size is always populated.
 	// This tests the ValueString path used in Create.
@@ -307,7 +282,6 @@ func TestImageResource_DiskSizeDefault(t *testing.T) {
 	}
 }
 
-// TestImageResource_OutputPaths tests the output path construction.
 func TestImageResource_OutputPaths(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -356,7 +330,6 @@ func TestImageResource_OutputPaths(t *testing.T) {
 	}
 }
 
-// TestImageResource_DeleteCleansUpFile tests that Delete removes the image file.
 func TestImageResource_DeleteCleansUpFile(t *testing.T) {
 	dir := t.TempDir()
 	qcow2 := filepath.Join(dir, testDiskFilename)
@@ -380,7 +353,6 @@ func TestImageResource_DeleteCleansUpFile(t *testing.T) {
 	}
 }
 
-// TestImageResource_DeleteNullImagePath tests that Delete handles null ImagePath.
 func TestImageResource_DeleteNullImagePath(t *testing.T) {
 	data := &ImageResourceModel{
 		ImagePath: types.StringNull(),
@@ -391,7 +363,6 @@ func TestImageResource_DeleteNullImagePath(t *testing.T) {
 	}
 }
 
-// TestStringOneOfValidator tests the stringOneOf validator.
 func TestStringOneOfValidator(t *testing.T) {
 	val := stringOneOf(testFilesystem, "ext4", "btrfs")
 
@@ -430,7 +401,6 @@ func TestStringOneOfValidator(t *testing.T) {
 	}
 }
 
-// TestImageResource_BootcArgs tests the bootc arguments construction.
 func TestImageResource_BootcArgs(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -549,7 +519,6 @@ func TestImageResource_BootcArgs(t *testing.T) {
 	}
 }
 
-// TestImageResource_CreateMakesOutputDir tests that Create creates the output directory.
 func TestImageResource_CreateMakesOutputDir(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "nested", "deep", "output")
 
@@ -568,7 +537,6 @@ func TestImageResource_CreateMakesOutputDir(t *testing.T) {
 	}
 }
 
-// skipUnlessAcc skips the test unless BOOTC_ACC=1 is set.
 func skipUnlessAcc(t *testing.T) {
 	t.Helper()
 
@@ -577,7 +545,6 @@ func skipUnlessAcc(t *testing.T) {
 	}
 }
 
-// requireCmd skips the test if a command is not found.
 func requireCmd(t *testing.T, name string) {
 	t.Helper()
 
@@ -586,7 +553,6 @@ func requireCmd(t *testing.T, name string) {
 	}
 }
 
-// requireRoot skips the test if not running as root.
 func requireRoot(t *testing.T) {
 	t.Helper()
 
@@ -595,14 +561,11 @@ func requireRoot(t *testing.T) {
 	}
 }
 
-// testContainerfile is a minimal bootc-compatible Containerfile.
 const testContainerfile = `FROM quay.io/fedora/fedora-bootc:41
 RUN dnf install -y vim-minimal && dnf clean all
 `
 
-// buildTestImage builds a bootc-compatible container image using podman
-// and returns the local image reference. The image is cleaned up on test
-// completion.
+// buildTestImage builds and returns a local bootc image ref; cleaned up via t.Cleanup.
 func buildTestImage(t *testing.T) string {
 	t.Helper()
 	requireCmd(t, "podman")
@@ -638,7 +601,6 @@ func buildTestImage(t *testing.T) string {
 	return tag
 }
 
-// TestIntegration_BuildQcow2 tests building a qcow2 image.
 func TestIntegration_BuildQcow2(t *testing.T) {
 	skipUnlessAcc(t)
 	requireRoot(t)
@@ -728,7 +690,6 @@ func TestIntegration_BuildQcow2(t *testing.T) {
 	}
 }
 
-// TestIntegration_BuildQcow2_CustomDiskSize tests building a qcow2 image with custom disk size.
 func TestIntegration_BuildQcow2_CustomDiskSize(t *testing.T) {
 	skipUnlessAcc(t)
 	requireRoot(t)
@@ -798,7 +759,6 @@ func TestIntegration_BuildQcow2_CustomDiskSize(t *testing.T) {
 	}
 }
 
-// TestIntegration_BootcRunVersion tests the BootcRun function with --help.
 func TestIntegration_BootcRunVersion(t *testing.T) {
 	skipUnlessAcc(t)
 

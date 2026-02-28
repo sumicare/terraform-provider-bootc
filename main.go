@@ -1,25 +1,4 @@
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    Copyright 2026 Sumicare
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +14,6 @@
    limitations under the License.
 */
 
-// Package main is the entry point for the Bootc Terraform provider.
 package main
 
 import (
@@ -47,12 +25,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
-// version is set via -ldflags during `yarn build` from package.json.
-var (
-	version = "dev"
-)
+// version is set via -ldflags at build time.
+var version = "dev"
 
-// main is the entry point for the Bootc Terraform provider.
 func main() {
 	var debug bool
 

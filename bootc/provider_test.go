@@ -1,25 +1,4 @@
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    Copyright 2026 Sumicare
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +25,6 @@ import (
 
 var _ provider.Provider = &BootcProvider{}
 
-// TestBootcProvider_New tests the New function.
 func TestBootcProvider_New(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -86,7 +64,6 @@ const (
 	testVersionDev = "dev"
 )
 
-// TestBootcProvider_Metadata tests the Metadata method.
 func TestBootcProvider_Metadata(t *testing.T) {
 	prov := &BootcProvider{version: "1.2.3"}
 	resp := &provider.MetadataResponse{}
@@ -102,7 +79,6 @@ func TestBootcProvider_Metadata(t *testing.T) {
 	}
 }
 
-// TestBootcProvider_Schema tests the Schema method.
 func TestBootcProvider_Schema(t *testing.T) {
 	prov := &BootcProvider{}
 	resp := &provider.SchemaResponse{}
@@ -114,7 +90,6 @@ func TestBootcProvider_Schema(t *testing.T) {
 	}
 }
 
-// TestBootcProvider_Configure tests the Configure method.
 func TestBootcProvider_Configure(t *testing.T) {
 	prov := &BootcProvider{}
 	resp := &provider.ConfigureResponse{}
@@ -126,7 +101,6 @@ func TestBootcProvider_Configure(t *testing.T) {
 	}
 }
 
-// TestBootcProvider_Resources tests the Resources method.
 func TestBootcProvider_Resources(t *testing.T) {
 	prov := &BootcProvider{}
 	resources := prov.Resources(t.Context())
@@ -144,7 +118,6 @@ func TestBootcProvider_Resources(t *testing.T) {
 	}
 }
 
-// TestBootcProvider_DataSources tests the DataSources method.
 func TestBootcProvider_DataSources(t *testing.T) {
 	prov := &BootcProvider{}
 	ds := prov.DataSources(t.Context())
@@ -154,7 +127,6 @@ func TestBootcProvider_DataSources(t *testing.T) {
 	}
 }
 
-// TestBootcProvider_Implements tests that the provider implements the required interfaces.
 func TestBootcProvider_Implements(t *testing.T) {
 	tests := []struct {
 		fn   func() provider.Provider

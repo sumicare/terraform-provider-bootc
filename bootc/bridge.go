@@ -35,12 +35,9 @@ import (
 
 //go:generate cargo build --release -p bootc-bridge
 
-// ErrBootcExit is returned when bootc exits with a non-zero code.
 var ErrBootcExit = errors.New("bootc exited with error")
 
-// BootcRun calls bootc-lib's cli::run_from_iter with the given arguments.
-// The first argument should be "bootc".
-// Returns nil on success, error on failure.
+// BootcRun invokes bootc via the Rust bridge. Not concurrency-safe.
 func BootcRun(args []string) error {
 	argc := C.int32_t(len(args))
 	argv := make([]*C.char, 0, len(args))

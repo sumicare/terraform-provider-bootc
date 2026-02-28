@@ -1,25 +1,4 @@
 /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    Copyright 2026 Sumicare
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,22 +25,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 )
 
-// stringOneOfValidator validates that a string value is one of a set of allowed values.
 type stringOneOfValidator struct {
 	values []string
 }
 
-// Description returns a description of the validator.
 func (v stringOneOfValidator) Description(_ context.Context) string {
 	return "value must be one of: " + strings.Join(v.values, ", ")
 }
 
-// MarkdownDescription returns a markdown description of the validator.
 func (v stringOneOfValidator) MarkdownDescription(ctx context.Context) string {
 	return v.Description(ctx)
 }
 
-// ValidateString validates that the string value is one of the allowed values.
 func (v stringOneOfValidator) ValidateString(
 	_ context.Context,
 	req validator.StringRequest,
@@ -83,7 +58,6 @@ func (v stringOneOfValidator) ValidateString(
 	)
 }
 
-// stringOneOf creates a new stringOneOfValidator with the given allowed values.
 func stringOneOf(values ...string) validator.String {
 	return stringOneOfValidator{values: values}
 }
