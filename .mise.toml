@@ -1,5 +1,6 @@
 [tools]
-go = "1.25"
-rust = "latest"
-golangci-lint = "2.6"
-goreleaser = "2.12"
+go = "1.26.0"
+rust = "1.93.1"
+golangci-lint = "2.10.1"
+goreleaser = "2.14.1"
+opentofu = "1.11.5"
